@@ -1,4 +1,6 @@
 <script lang="ts">
+	import LoginForm from "../components/LoginForm.svelte";
+
 
 </script>
 
@@ -14,3 +16,4 @@
 
 <div class="circle"></div>
 <a href="/user">User</a>
+<LoginForm></LoginForm>
