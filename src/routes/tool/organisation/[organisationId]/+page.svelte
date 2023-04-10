@@ -35,12 +35,12 @@
     async function searchUsers() {
         const res = await aj().user().GET_PROTECTED<User[]>(`/user/?userName=${userSearch}&amount=10`);
         const filtered = res.data
-        .filter(user => $organisationUsers.get("OWNER")?.includes(user))
+        /* .filter(user => $organisationUsers.get("OWNER")?.includes(user))
         .filter(user => $organisationUsers.get("ADMIN")?.includes(user))
         .filter(user => $organisationUsers.get("MANAGER")?.includes(user))
         .filter(user => $organisationUsers.get("EDIT")?.includes(user))
         .filter(user => $organisationUsers.get("VIEW")?.includes(user));
-        console.log(Object.values($organisationUsers));
+        console.log(Object.values($organisationUsers)); */
         
         users.set(filtered);
     }

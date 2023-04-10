@@ -11,14 +11,14 @@
     onMount(async () => {
         uvm().init();
         //gvm().getAll();
-        //sse = new EventSource(`http://127.0.0.1:2104/api/v1/sse/${$user?.userId}`);
-        //sse.onmessage = (res) => {
-        //    invites.update(invites => {
-        //        invites.push(JSON.parse(res.data) as Invite);
-        //        return invites;
-        //    })
-        //    console.log(res.data);
-        //}
+        sse = new EventSource(`http://127.0.0.1:2104/api/v1/sse/${$user?.userId}`);
+        sse.onmessage = (res) => {
+            invites.update(invites => {
+                invites.push(JSON.parse(res.data) as Invite);
+                return invites;
+            })
+            console.log(res.data);
+        }
     });
 </script>
 

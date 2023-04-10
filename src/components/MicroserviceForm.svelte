@@ -8,7 +8,7 @@
     
     function createMicroservice() {
         mvm().create({microserviceName: microName, projectId: $project?.projectId} as Microservice)
-        .then(res => window.location.href = `/tool/organisation/${$organisation?.organisationId}/project/${$project?.projectId}/microservice/${$microservice?.microservcieId}`);
+        .then(res => window.location.href = `/tool/microservice/${$microservice?.microserviceId}`);
     }
 </script>
 
