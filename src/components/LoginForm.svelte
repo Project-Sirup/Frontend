@@ -1,42 +1,69 @@
 <script lang="ts">
-	import { getContext } from "svelte";
-    import type User from "./UserContext.svelte";
+    import uvm from "../stores/User";
+    import { error } from "../stores/Error";
+	import type { User } from "../models/User";
+	import { writable, type Writable } from "svelte/store";
 
-    export let userName: String = "";
-    export let password: String = "";
-    const user: User = getContext("user");
-    let token: String = getContext("token");
-    const login = () => {
-        console.log(userName);
-        console.log(password);
-        fetch("http://127.0.0.1:2102/api/v1/user/login", {
-            method: "POST",
-            body: JSON.stringify({
-                user: {
-                    userName: userName,
-                    password: password,
-                },
-            }),
+    let userName = "";
+    let password = "";
+
+    const wrong: Writable<boolean> = writable<boolean>(false);
+
+    const login = async () => {
+        uvm().login({userName: userName, password: password} as User)
+        .then(success => {
+            wrong.set(!success);
+            if (success) {
+                window.location.href = "/tool";
+                return;
+            }
         })
-        .then(res => res.json())
-        .then(json => {
-            user.userName = json.data.user.userName;
-            user.userId = json.data.user.userId;
-            token = json.data.token;
-        })
-        .catch(err => {
-            alert("Could not login... please try again later");
-        })
+        .catch(console.log);
     }
-
 </script>
 
+<style>
+    :global(form) {
+        display: flex;
+        flex-direction: column;
+        max-width: 20rem;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        position: fixed;
+        top: 30%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        gap: 1rem;
+    }
+    :global(label) {
+        font-size: 2rem;
+    }
+    :global(input[type="text"], input[type="password"]) {
+        border: none;
+        background-color: rgba(255, 255, 255, .1);
+        font-size: 1rem;
+        padding: .5rem 1rem;
+        color: white;
+        width: 100%;
+    }
+    :global(input[type="submit"]) {
+        background-color: rgba(0, 0, 0, .5);
+        border: none;
+        color: dodgerblue;
+        font-size: 2rem;
+        cursor: pointer;
+        width: 100%;
+        padding: .25rem 1rem;
+        font-weight: bold;
+    }
+</style>
+
 <form on:submit|preventDefault={login}>
-    <label for="userName">userName
-        <input type="text" name="userName" id="userName" bind:value={userName}>
-    </label>
-    <label for="password">password
-        <input type="password" name="password" id="password" bind:value={password}>
-    </label>
+    <input type="text" name="userName" id="userName" bind:value={userName} placeholder="Username">
+    <input type="password" name="password" id="password" bind:value={password} placeholder="Passord">
     <input type="submit" value="Login">
+    {#if $wrong}
+        <div>Wrong credentials</div>
+    {/if}
 </form>

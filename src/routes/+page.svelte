@@ -1,19 +1,71 @@
 <script lang="ts">
-	import LoginForm from "../components/LoginForm.svelte";
-
+	import { onMount } from "svelte";
+	import uvm, { token, user } from "../stores/User";
+	import { browser } from "$app/environment";
+    
+    onMount(() => {
+        uvm().init()
+	    .then(isLoggedIn => {
+		    if (isLoggedIn) {
+		    	window.location.href = "/tool";
+		    }
+	    });
+    });
 
 </script>
 
-<style>
+<style global>
+    .content {
+        position: fixed;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+    .header {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .header-title {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+    }
+    .user-access {
+        display: flex;
+        justify-content: center;
+        gap: 5rem;
+    }
     .circle {
-        background: linear-gradient(90deg, cyan, magenta);
-        height: 100px;
+        background: linear-gradient(135deg, cyan, magenta);
+        height: 50px;
         aspect-ratio: 1/1;
         border-radius: 50px;
     }
+    a {
+        color: dodgerblue;
+        background-color: rgba(0,0,0,.5);
+        padding: 0 2rem;
+        font-size: 1rem;
+        font-weight: bold;
+        text-decoration: none;
+    }
 </style>
 
-
-<div class="circle"></div>
-<a href="/user">User</a>
-<LoginForm></LoginForm>
+<div class="content">
+    <div class="header">
+        <div class="header-title">
+            <h1>Project-Sirup</h1>
+            <div class="circle"/>
+        </div>
+        <div class="header-subtitle">
+            <h2>Microservice Development Tool</h2>
+        </div>
+    </div>
+    <div class="user-access">
+        <a href="/login"><h3>Log in</h3></a>
+        <a href="/signup"><h3>Sign up</h3></a>
+    </div>
+</div>
