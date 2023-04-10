@@ -41,6 +41,8 @@
 
 	const downloadLink: Writable<string | undefined> = writable<string | undefined>(undefined);
 
+	const generating: Writable<boolean> = writable<boolean>(false);
+
 	const currentGen: Writable<Generator> = writable<Generator>();
 	
 	const language: Writable<Language> = writable<Language>();
@@ -166,6 +168,7 @@
 	}
 
 	async function sendGenFile() {
+		$generating = true;
 		const res = await fetch($currentGen.serviceAddress, {
 			method: "POST",
 			body: JSON.stringify($genJson),
@@ -173,6 +176,7 @@
 		const json = await res.json();
 		downloadLink.set(json.data);
 		console.log(json);
+		$generating = false;
 	}
 
 	function save() {
@@ -428,6 +432,9 @@
 <button on:click={() => save()}>Save</button>
 
 <button on:click={() => sendGenFile()}>Generate</button>
+{#if $generating}
+	Generating code...
+{/if}
 {#if $downloadLink}
 	<a href={$downloadLink}>Download</a>
 {/if}

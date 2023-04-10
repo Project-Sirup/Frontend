@@ -1,4 +1,5 @@
-import { writable, type Writable } from "svelte/store";
+import { writable } from "svelte/store";
+import type { Writable } from "svelte/store";
 import { browser } from "$app/environment";
 import type { Organisation } from "../models/Organisation";
 import aj from "../util/AJ";
@@ -7,8 +8,6 @@ import type { User } from "../models/User";
 let _org;
 
 if (browser) {
-    console.log("brower");
-    
     const localOrg = localStorage.getItem("last_organisation");
     if (localOrg !== null && localOrg !== undefined) {
         _org = JSON.parse(localOrg) as Organisation;

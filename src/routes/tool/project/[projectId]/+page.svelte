@@ -17,6 +17,12 @@
 </script>
 
 <style>
+    .header {
+        text-align: center;
+    }
+    .header > a {
+        font-size: 2rem;
+    }
     a {
         text-decoration: none;
     }
@@ -25,29 +31,69 @@
         margin: .5rem;
         background-color: rgba(0,0,0,.5);
     }
+    .microservice:hover {
+        background-color: rgba(255,255,255,.1);
+    }
     .microservice-name {
         font-weight: bold;
         text-decoration: none;
         color: white;
-
+    }
+    .tags {
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+        justify-content: center;
+    }
+    .tag {
+        border: red solid 2px;
+        border-radius: 50px;
+        padding: .5rem;
+        margin: 0;
+    }
+    .lang {
+        background-color: rgba(0,255,0,.1);
+        border-color: rgba(0,255,0,.75);
+        color: rgba(0,255,0,.75);
+    }
+    .api {
+        background-color: rgba(0,255,255,.1);
+        border-color: rgba(0,255,255,.75);
+        color: rgba(0,255,255,.75);
+    }
+    .db {
+        background-color: rgba(255,0,255,.1);
+        border-color: rgba(255,0,255,.75);
+        color: rgba(255,0,255,.75);
     }
 </style>
 
-<h1>{$project?.projectName}</h1>
-<a href="/tool/microservice">MS</a>
+<div class='header'>
+    <h1>Project: {$project?.projectName}</h1>
+    <a href="/tool/microservice">Create a new Microservice</a>
+</div>
 
 {#each $microservices as micro}
     <a on:click={() => gotoMicro(micro)}
-        href="/tool/microservice/{$microservice?.microserviceId}">
+        href="/tool/microservice/{micro.microserviceId}">
         <div class='microservice'>
             <h1 class='microservice-name'>{micro.microserviceName}</h1>
-            {#if micro.genFile}
-                <h2>{micro.genFile.microservice.language.name}</h2>
-                <h2>{micro.genFile.microservice.api.type}</h2>
-                <h2>{micro.genFile.microservice.database.name}</h2>
-            {:else}
-                <h2>No generation file</h2>
-            {/if}
+            <div class='tags'>
+                {#if micro.microserviceFile}
+                    <!--<pre>{JSON.stringify(micro.microserviceFile.microservice)}</pre>-->
+                        {#if micro.microserviceFile.microservice.language}
+                            <h2 class='tag lang'>{micro.microserviceFile.microservice.language.name}</h2>
+                        {/if}
+                        {#if micro.microserviceFile.microservice.api}
+                            <h2 class='tag api'>{micro.microserviceFile.microservice.api.type}</h2>
+                        {/if}
+                        {#if micro.microserviceFile.microservice.database}
+                            <h2 class='tag db'>{micro.microserviceFile.microservice.database.name}</h2>
+                        {/if}
+                {:else}
+                    <h2>No generation file</h2>
+                {/if}
+            </div>
         </div>
     </a>
 {/each}

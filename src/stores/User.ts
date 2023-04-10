@@ -1,5 +1,6 @@
 import { browser } from "$app/environment";
-import { writable, type Writable } from "svelte/store";
+import { writable } from "svelte/store";
+import type { Writable } from "svelte/store";
 import type { Organisation } from "../models/Organisation";
 import type { User } from "../models/User";
 import aj from "../util/AJ";
@@ -12,10 +13,7 @@ export const token: Writable<string | null> = writable<string | null>(null);
 class UserViewModel {
     
     init = async (): Promise<boolean> => {
-
         if (browser) {
-            console.log("brower");
-            
             const localUser = localStorage.getItem("user");
             const _token = localStorage.getItem("token");
             if (localUser) {

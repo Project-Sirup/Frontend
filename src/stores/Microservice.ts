@@ -1,13 +1,13 @@
 import { writable } from "svelte/store";
 import type { Writable } from "svelte/store";
-import type { Microservice } from "../models/Microservice";
+import type { Microservice, RawMicroservice } from '../models/Microservice';
 import { browser } from "$app/environment";
 import aj from "../util/AJ";
+import type { GenFile } from '../models/GenFile';
 
 let _micro;
 
 if(browser) {
-    console.log("browser");
     const localMicro = localStorage.getItem("last_microservice");
     if (localMicro) {
         _micro = JSON.parse(localMicro) as Microservice;
@@ -39,10 +39,27 @@ class MicroserviceViewModel {
     }
 
     findAll = async (projectId: string): Promise<Microservice[]> => {
-        const res = await aj().user().GET_PROTECTED<Microservice[]>(`/microservice/project/${projectId}`);
-        microservices.set(res.data);
-        return res.data;
+        const res = await aj().user().GET_PROTECTED<RawMicroservice[]>(`/microservice/project/${projectId}`);
+        const microArr: Microservice[] = [];
+        res.data.forEach(rawMicroservice => {
+            const microservice: Microservice = {
+                microserviceId: rawMicroservice.microserviceId,
+                microserviceName: rawMicroservice.microserviceName,
+                projectId: rawMicroservice.projectId,
+                user: rawMicroservice.users,
+            } as Microservice;
+            if (rawMicroservice.microserviceFile?.type === "json") {
+                const paresGenFile = rawMicroservice.microserviceFile.value;
+                console.log(JSON.parse(paresGenFile));
+                microservice.microserviceFile = JSON.parse(rawMicroservice.microserviceFile.value);
+            }
+            //console.log(microservice);
+            microArr.push(microservice);
+        })
+        microservices.set(microArr);
+        return microArr;
     }
+
 }
 
 const mvm = () => {
