@@ -28,7 +28,11 @@ class OrganisationViewModel {
 
     create = async (organisation: Organisation): Promise<Organisation> => {
         const res = await aj().user().POST_PROTECTED<Organisation, Organisation>("/organisation", organisation);
-        organisations.update(orgs => [...orgs, res.data]);
+        organisations.update(orgs => {
+            console.log(res);
+            orgs.push(res.data);
+            return orgs;
+        });
         localStorage.setItem("last_organisation", JSON.stringify(res.data));
         return res.data;
     }

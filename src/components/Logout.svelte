@@ -3,7 +3,7 @@
 
     const logout = () => {
         uvm().logout()
-        .then(_ =>  window.location.href = "/");
+        .then(() =>  window.location.href = "/");
     }
 
 </script>

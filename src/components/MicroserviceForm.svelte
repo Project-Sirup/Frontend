@@ -8,13 +8,11 @@
     
     function createMicroservice() {
         mvm().create({microserviceName: microName, projectId: $project?.projectId} as Microservice)
-        .then(res => window.location.href = `/tool/microservice/${$microservice?.microserviceId}`);
+        .then(res => window.location.href = `/tool/microservice/${res.microserviceId}`);
     }
 </script>
 
-<form on:submit|preventDefault={createMicroservice}>
-    <label for="microName">Microservice name
-        <input type="text" name="microName" id="microName" bind:value={microName}>
-    </label>
-    <input type="submit" value="Create new microservice">
-</form>
+<div class='new-data'>
+    <input class='new-text' type="text" name="microName" id="microName" bind:value={microName} placeholder='Microservice name'>
+    <input class='new-submit' type="submit" value="Create new microservice" on:click={() => createMicroservice()}>
+</div>

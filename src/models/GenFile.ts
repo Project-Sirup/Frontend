@@ -1,5 +1,6 @@
 export type GenFile = {
     sirup_v: number;
+    generatedFrom: string;
     docker: boolean;
     microservice: GenMicroservice;
 }

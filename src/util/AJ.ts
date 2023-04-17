@@ -1,7 +1,8 @@
-import { error, type Error } from "../stores/Error";
+import { error } from "../stores/Error";
+import type { Error } from "../stores/Error";
 import uvm from "../stores/User";
 
-export type Response<T> = {
+export type ApiResponse<T> = {
     statusCode: number;
     message: string;
     data: T;
@@ -57,11 +58,11 @@ class AJ{
 
     internal = (token: string, userId: string, systemAccess: string) => {
         AJ.token = token;
-        AJ.userId = userId,
+        AJ.userId = userId;
         AJ.systemAccess = systemAccess;
     }
 
-    GET = async <R>(endpoint: string): Promise<Response<R>> => {
+    GET = async <R>(endpoint: string): Promise<ApiResponse<R>> => {
         const res = await fetch(`${this.url}${endpoint}`,{
             method: "GET",
             headers: {
@@ -71,22 +72,24 @@ class AJ{
         return await res.json();
     }
 
-    GET_PROTECTED = async <R>(endpoint: string): Promise<Response<R>> => {
+    GET_PROTECTED = async <R>(endpoint: string): Promise<ApiResponse<R>> => {
         try {
             const res = await fetch(`${this.url}/protected${endpoint}`,{
                 method: "GET",
                 headers: this._protected_header(),
             });
-            return await res.json();
+            if (res.status === 200) {
+                return await res.json();
+            }
+            return { statusCode: res.status, message: res.statusText, data: null } as ApiResponse<null>;
         } catch (err) {
             console.log(err);
-
-            uvm().logout();
-            return { } as Response<R>           
+            await uvm().logout();
+            return { statusCode: 503, message: "Service Unavailable", data: null } as ApiResponse<null>;
         }
     }
 
-    POST = async <S,R>(endpoint: string, body: S): Promise<Response<R | null>> => {
+    POST = async <S,R>(endpoint: string, body: S): Promise<ApiResponse<R | null>> => {
         try {
             const res = await fetch(`${this.url}${endpoint}`, {
                 method: "POST",
@@ -98,24 +101,33 @@ class AJ{
             if (res.status === 200 || res.status === 201) {
                 return await res.json();
             }
-            return { statusCode: res.status, message: res.statusText, data: null } as Response<null>;
+            return { statusCode: res.status, message: res.statusText, data: null } as ApiResponse<null>;
         } catch (err) {
             console.log(err);
-            error.set({code: 503, type: "Service", message: "Service Unavailable"} as Error);
-            return { statusCode: 503, message: "Service Unavailable", data: null } as Response<null>;
+            error.set({ code: 503, type: "Service", message: "Service Unavailable" } as Error);
+            return { statusCode: 503, message: "Service Unavailable", data: null } as ApiResponse<null>;
         }
     }
 
-    POST_PROTECTED = async <S,R>(endpoint: string, body: S): Promise<Response<R>> => {
-        const res = await fetch(`${this.url}/protected${endpoint}`, {
-            method: "POST",
-            headers: this._protected_header(),
-            body: JSON.stringify(body),
-        });
-        return await res.json();
+    POST_PROTECTED = async <S,R>(endpoint: string, body: S): Promise<ApiResponse<R>> => {
+        try {
+            const res = await fetch(`${this.url}/protected${endpoint}`, {
+                method: "POST",
+                headers: this._protected_header(),
+                body: JSON.stringify(body),
+            });
+            if (res.status === 200 || res.status === 201) {
+                return await res.json();
+            }
+            return { statusCode: res.status, message: res.statusText, data: null } as ApiResponse<null>;
+        } catch (err) {
+            console.log(err);
+            error.set({ code: 503, type: "Service", message: "Service Unavailable" } as Error);
+            return { statusCode: 503, messagE: "Service Unvailable", data: null } as ApiResponse<null>;
+        }
     }
 
-    PUT_PROTECTED = async <S,R>(endpoint: string, body: S): Promise<Response<R>> => {
+    PUT_PROTECTED = async <S,R>(endpoint: string, body: S): Promise<ApiResponse<R>> => {
         const res = await fetch(`${this.url}/protected${endpoint}`, {
             method: "PUT",
             headers: this._protected_header(),
@@ -124,7 +136,7 @@ class AJ{
         return await res.json();
     }
 
-    DELETE_PROTECTED = async <R>(endpoint: string): Promise<Response<R>> => {
+    DELETE_PROTECTED = async <R>(endpoint: string): Promise<ApiResponse<R>> => {
         const res = await fetch(`${this.url}/protected${endpoint}`, {
             method: "DELETE",
             headers: this._protected_header(),

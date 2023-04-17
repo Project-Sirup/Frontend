@@ -18,10 +18,9 @@
     }
 </script>
 
-
 <form on:submit|preventDefault={signup}>
-    <input type="text" name="userName" id="userName" bind:value={userName} placeholder="Username">
-    <input type="password" name="password" id="password" bind:value={password} placeholder="Password">
-    <input type="password" name="password2" id="password2" bind:value={password2} placeholder="Confirm Password">
-    <input type="submit" value="Sign up">
+    <input class='cred-text' type="text" name="userName" id="userName" bind:value={userName} placeholder="Username">
+    <input class='cred-text' type="password" name="password" id="password" bind:value={password} placeholder="Password">
+    <input class='cred-text' type="password" name="password2" id="password2" bind:value={password2} placeholder="Confirm Password">
+    <input class='cred-submit' type="submit" value="Sign up">
 </form>

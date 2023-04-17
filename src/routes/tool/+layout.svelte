@@ -1,15 +1,14 @@
 <script lang="ts">
-	import { onMount } from "svelte";
+	  import { onMount } from "svelte";
     import SideBar from "../../components/SideBar.svelte";
-    import uvm, { user } from "../../stores/User";
-	import { invites } from "../../stores/Invites";
-	import type { Invite } from "../../models/Invite";
-	import ovm from "../../stores/Organisation";
+    import { user } from "../../stores/User";
+	  import { invites } from "../../stores/Invites";
+	  import type { Invite } from "../../models/Invite";
 
     let sse;
 
     onMount(async () => {
-        uvm().init();
+        //await uvm().init();
         //gvm().getAll();
         sse = new EventSource(`http://127.0.0.1:2104/api/v1/sse/${$user?.userId}`);
         sse.onmessage = (res) => {
@@ -28,6 +27,7 @@
         margin-bottom: 3rem;
     }
 </style>
+
 
 <SideBar></SideBar>
 <div class="content">

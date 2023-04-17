@@ -8,25 +8,26 @@
 	import Logout from "./Logout.svelte";
 	import ivm, { invites } from "../stores/Invites";
 	import type { Invite } from "../models/Invite";
+	import ColorBackground from "./ColorBackground.svelte";
 
+    let width = "10rem";
+    const showSideBar: Writable<boolean> = writable<boolean>(true);
     const showOrgs: Writable<boolean> = writable(false);
     const showInv: Writable<boolean> = writable(false);
 
     onMount(async () => {
-        uvm().init()
-        .then(() => {
-            uvm().findOrganisations()
-            .then(res => console.table(res));
-            ivm().findAll()
-            .then(res => console.log(res));
+        await uvm().init()
+        .then(async () => {
+            await uvm().findOrganisations();
+            await ivm().findAll();
         });
     });
 
     function toggleOrgs() {
-        showOrgs.update(showOrgs => showOrgs = !showOrgs);
+        showOrgs.update(showOrgs => !showOrgs);
     }
     function toggleInvs() {
-        showInv.update(showInv => showInv = !showInv);
+        showInv.update(showInv => !showInv);
     }
     function gotoOrg(organisation: Organisation) {
         ovm().set(organisation);
@@ -36,24 +37,66 @@
     }
     function respond(invite: Invite, accept: boolean) {
         ivm().respond(invite, accept)
-        .then(_ => invites.set($invites.filter(_invite => !(_invite.senderId === invite.senderId && _invite.organisationId === invite.organisationId))));
+        .then(() => invites.set($invites.filter(_invite => !(_invite.senderId === invite.senderId && _invite.organisationId === invite.organisationId))));
     }
+    function toggleSideBar() {
+        $showSideBar = !$showSideBar;
+        width =  $showSideBar? "10rem" : "1rem";
+    }
+
 
 </script>
 
+
 <style>
+    @property --color-1 {
+		syntax: '<color>';
+		inherits: true;
+		initial-value: cyan;
+	}
+	@property --color-2 {
+		syntax: '<color>';
+		inherits: true;
+		initial-value: magenta;
+	}
+	@keyframes move {
+		50%{
+			--angle: 360deg;
+            --color-1: magenta;
+            --color-2: cyan;
+		}
+	}
+
+    .edge {
+        position: relative;
+        top: 0;
+        width: 1rem;
+        height: 100%;
+        left: 100%;
+        background: linear-gradient(var(--color-1), var(--color-2));
+        border: none;
+        cursor: pointer;
+        animation: move 15000ms infinite alternate;
+    }
     .side-bar {
-        background: linear-gradient(cyan, purple);
+        display: flex;
+        flex-direction: row;
+        background-color: rgb(50,50,50);
         position: fixed;
         left: 0;
         top: 0;
         bottom: 2rem;
         width: 10rem;
-        overflow-y: auto;
+    }
+    .side-bar-content {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 10rem;
     }
     .section-header {
         width: 100%;
-        background: linear-gradient(rgba(0, 0, 0, .25), rgb(0,0,0,0));
+        background: linear-gradient(rgb(75,75,75), rgba(0,0,0,0));
         color: white;
         cursor: pointer;
         border: none;
@@ -117,57 +160,62 @@
     }
 </style>
 
-<div class="side-bar">
-    <div class="top">
-        <a href="/tool">Home</a>
-    </div>
-    <div class="organisations">
-        <button class="section-header" on:click={toggleOrgs}><h3>Organisations</h3></button>
-        {#if $showOrgs}
-            {#if $organisations.length === 0}
-                <div class="section-content">
-                    <h4>You have no organisations. 
-                        Click <a href="/tool/organisation">Here</a> to create one.
-                    </h4>
-                </div>
-            {:else}
-                <a href="/tool/organisation">New</a>
-                {#each $organisations as org}
-                    <div class="section-content organisation">
-                        <a on:click={() => gotoOrg(org)} href="/tool/organisation/{org.organisationId}">
-                            <h4>{org.organisationName}</h4>
-                        </a>
-                    </div>
-                {/each}
-            {/if}
-        {/if}
-    </div>
-    <div class="invites">
-        <button class="section-header" on:click={toggleInvs}><h3 class="invites-header">Invites
-            {#if $invites.length > 0}
-                <p class="invite-number">{$invites.length}</p>
-            {/if}
-            </h3>
-        </button>
-        {#if $showInv}
-            {#if $invites.length > 0}
-                {#each $invites as invite}
-                <div class="section-content invite">
-                    {invite.senderName} has invited you to {invite.organisationName}
-                    <div class="invite-control">
-                        <button class="accept" on:click={() => respond(invite, true)}>Accept</button>
-                        <button class="decline" on:click={() => respond(invite, false)}>Decline</button>
-                    </div>
-                </div>
-                {/each}
-            {:else}
-                <div class="section-content">
-                    <p>You have no invites</p>
-                </div>
-            {/if}
-        {/if}
-    </div>
-    <div class="bottom">
-        <Logout></Logout>
-    </div>
+<div class="side-bar" style='width: {width};'>
+    <button class='edge' on:click={() => toggleSideBar()}></button>
+    {#if $showSideBar}
+        <div class='side-bar-content'>
+            <div class="top">
+                <a href="/tool">Home</a>
+            </div>
+            <div class="organisations">
+                <button class="section-header" on:click={toggleOrgs}><h3>Organisations</h3></button>
+                {#if $showOrgs}
+                    {#if $organisations.length === 0}
+                        <div class="section-content">
+                            <h4>You have no organisations.
+                                Click <a href="/tool/organisation">Here</a> to create one.
+                            </h4>
+                        </div>
+                    {:else}
+                        <a href="/tool/organisation">New</a>
+                        {#each $organisations as org}
+                            <div class="section-content organisation">
+                                <a on:click={() => gotoOrg(org)} href="/tool/organisation/{org.organisationId}">
+                                    <h4>{org.organisationName}</h4>
+                                </a>
+                            </div>
+                        {/each}
+                    {/if}
+                {/if}
+            </div>
+            <div class="invites">
+                <button class="section-header" on:click={toggleInvs}><h3 class="invites-header">Invites
+                    {#if $invites.length > 0}
+                        <p class="invite-number">{$invites.length}</p>
+                    {/if}
+                    </h3>
+                </button>
+                {#if $showInv}
+                    {#if $invites.length > 0}
+                        {#each $invites as invite}
+                        <div class="section-content invite">
+                            {invite.senderName} has invited you to {invite.organisationName}
+                            <div class="invite-control">
+                                <button class="accept" on:click={() => respond(invite, true)}>Accept</button>
+                                <button class="decline" on:click={() => respond(invite, false)}>Decline</button>
+                            </div>
+                        </div>
+                        {/each}
+                    {:else}
+                        <div class="section-content">
+                            <p>You have no invites</p>
+                        </div>
+                    {/if}
+                {/if}
+            </div>
+            <div class="bottom">
+                <Logout></Logout>
+            </div>
+        </div>
+    {/if}
 </div>

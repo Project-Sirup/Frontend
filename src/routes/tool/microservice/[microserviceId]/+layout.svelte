@@ -1,7 +1,7 @@
 <style>
-	.content {
-			margin-inline: 25%;
-	}
+		.content {
+				margin-inline: 25%;
+		}
 </style>
 
 <div class='content'>

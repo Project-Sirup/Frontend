@@ -21,7 +21,12 @@ class ProjectViewModel {
 
     create = async (_project: Project): Promise<Project> => {
         const res = await aj().user().POST_PROTECTED<Project, Project>("/project", _project);
-        projects.update(pros => [...pros, res.data]);
+        projects.update(pros => {
+            pros.push(res.data);
+            return pros;
+        });
+        localStorage.setItem("last_project", JSON.stringify(res.data));
+        project.set(res.data);
         return res.data;
     }
 

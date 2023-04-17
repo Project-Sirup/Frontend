@@ -1,15 +1,14 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import uvm, { token, user } from "../stores/User";
-	import { browser } from "$app/environment";
-    
+	import uvm from "../stores/User";
+
     onMount(() => {
         uvm().init()
-	    .then(isLoggedIn => {
-		    if (isLoggedIn) {
-		    	window.location.href = "/tool";
-		    }
-	    });
+        .then(isLoggedIn => {
+        if (isLoggedIn) {
+          window.location.href = "/tool";
+        }
+        });
     });
 
 </script>
@@ -51,6 +50,12 @@
         font-size: 1rem;
         font-weight: bold;
         text-decoration: none;
+    }
+    .user-access > a {
+        transition: transform 250ms;
+    }
+    .user-access > a:hover {
+        transform: translateY(-.25rem);
     }
 </style>
 

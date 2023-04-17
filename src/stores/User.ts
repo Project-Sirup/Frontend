@@ -3,8 +3,11 @@ import { writable } from "svelte/store";
 import type { Writable } from "svelte/store";
 import type { Organisation } from "../models/Organisation";
 import type { User } from "../models/User";
-import aj from "../util/AJ";
-import { organisations } from "./Organisation";
+import aj from '../util/AJ';
+import type { ApiResponse } from '../util/AJ';
+import ovm, { organisation, organisations } from './Organisation';
+import pvm, { project } from './Project';
+import mvm, { microservice } from './Microservice';
 
 export const user: Writable<User | null > = writable<User | null>(null);
 
@@ -31,31 +34,25 @@ class UserViewModel {
 
     create = async (_user: User): Promise<boolean> => {
         const res = await aj().user().POST<User, {user: User, token: string}>("/user", _user);
-        if (!res || !res.data) {
-            return false;
-        }
-        localStorage.setItem("user", JSON.stringify(res.data.user));
-        localStorage.setItem("token", res.data.token);
-        user.set(res.data.user);
-        token.set(res.data.token);
-        aj().internal(res.data.token, res.data.user.userId, res.data.user.systemAccess);
-        return true;
+        return UserViewModel.handleUser(res);
     }
 
     login = async (_user: User): Promise<boolean> => {
         const res = await aj().user().POST<User, {user: User, token: string}>("/user/login", _user);
-        console.log(res.statusCode);
-        
+        return UserViewModel.handleUser(res);
+
+    }
+
+    private static handleUser(res: ApiResponse<{ user: User; token: string } | null>) {
         if (!res || !res.data) {
             return false;
         }
-        localStorage.setItem("user", JSON.stringify(res.data.user));
-        localStorage.setItem("token", res.data.token);
+        localStorage.setItem('user', JSON.stringify(res.data.user));
+        localStorage.setItem('token', res.data.token);
         user.set(res.data.user);
         token.set(res.data.token);
         aj().internal(res.data.token, res.data.user.userId, res.data.user.systemAccess);
         return true;
-        
     }
 
     logout = async (): Promise<void> => {
@@ -63,6 +60,9 @@ class UserViewModel {
         localStorage.removeItem("token");
         user.set(null);
         token.set(null);
+        await ovm().set(null);
+        await pvm().set(null);
+        await mvm().set(null);
     }
 
     findOrganisations = async (): Promise<Organisation[]> => {

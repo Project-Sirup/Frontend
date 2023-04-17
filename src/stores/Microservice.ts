@@ -38,6 +38,12 @@ class MicroserviceViewModel {
         console.log(res.data);
     }
 
+    find = async (microserviceId: string) => {
+        const res = await aj().user().GET_PROTECTED<Microservice>(`/microservice/${microserviceId}`);
+        console.log(res);
+        microservice.set(res.data);
+    }
+
     findAll = async (projectId: string): Promise<Microservice[]> => {
         const res = await aj().user().GET_PROTECTED<RawMicroservice[]>(`/microservice/project/${projectId}`);
         const microArr: Microservice[] = [];

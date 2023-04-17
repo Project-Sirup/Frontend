@@ -1,19 +1,24 @@
 <script lang="ts">
 	import type { Organisation } from "../models/Organisation";
 	import ovm from "../stores/Organisation";
-	import { token, user } from "../stores/User";
+  import { error } from '../stores/Error';
+  import type { Error } from '../stores/Error';
 
     let orgName = "";
 
     async function newOrg() {
         ovm().create({organisationName: orgName} as Organisation)
-        .then(res => window.location.href = `/tool/organisation/${res.organisationId}`);
+        .then(res => {
+            if(res) {
+                window.location.href = `/tool/organisation/${res.organisationId}`;
+                return;
+            }
+            error.set({ code: 500, type: "Service", message: "Failed to create organisation" } as Error);
+        });
     }
 </script>
 
-<form on:submit|preventDefault={newOrg}>
-    <label for="orgName">Organisation Name
-        <input bind:value={orgName} type="text" name="orgName" id="orgName">
-    </label>
-    <input type="submit" value="Create new organisation">
-</form>
+<div class='new-data new-organisation'>
+    <input class='new-text' bind:value={orgName} type="text" name="orgName" id="orgName" placeholder='Organisation name'>
+    <input class='new-submit' type="submit" value="Create new organisation" on:click={() => newOrg()}>
+</div>

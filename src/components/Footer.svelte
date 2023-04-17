@@ -1,5 +1,6 @@
 <style>
     .footer {
+        z-index: 999999999;
         position: fixed;
         left: 0;
         bottom: 0;
