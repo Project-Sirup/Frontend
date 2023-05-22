@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from "svelte";
 	import uvm from "../stores/User";
+	import ColorBackground from "../components/ColorBackground.svelte";
 
     onMount(() => {
         uvm().init()
@@ -37,8 +38,7 @@
         justify-content: center;
         gap: 5rem;
     }
-    .circle {
-        background: linear-gradient(135deg, cyan, magenta);
+    .inner-circle {
         height: 50px;
         aspect-ratio: 1/1;
         border-radius: 50px;
@@ -63,7 +63,11 @@
     <div class="header">
         <div class="header-title">
             <h1>Project-Sirup</h1>
-            <div class="circle"/>
+            <div class="circle"> 
+                <ColorBackground border_radius={"50%"}>
+                    <div class="inner-circle"></div>
+                </ColorBackground>
+            </div>
         </div>
         <div class="header-subtitle">
             <h2>Microservice Development Tool</h2>

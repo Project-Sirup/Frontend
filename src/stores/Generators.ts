@@ -9,7 +9,7 @@ export const generators: Writable<Generator[]> = writable<Generator[]>([]);
 class GeneratorViewModel {
 
     getAll = async (): Promise<Generator[]> => {
-        const res = await aj().register().GET<RawGenerator[]>("");
+        const res = await aj().register().GET<RawGenerator[]>("/register");
         console.log("res",res);
         const gens: Generator[] = [];
         res.data.forEach(rawGen => {

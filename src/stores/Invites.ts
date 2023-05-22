@@ -20,6 +20,7 @@ class InviteViewModel {
 
     invite = async (invite: Invite): Promise<void> => {
         await aj().user().POST_PROTECTED<Invite,null>("/invite", invite);
+        console.log("invite send");
     }
 
     respond = async (invite: Invite, accepted: boolean): Promise<void> => {

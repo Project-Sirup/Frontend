@@ -10,6 +10,8 @@
 	import type { Invite } from "../models/Invite";
 	import ColorBackground from "./ColorBackground.svelte";
 
+    export let top = 0;
+
     let width = "10rem";
     const showSideBar: Writable<boolean> = writable<boolean>(true);
     const showOrgs: Writable<boolean> = writable(false);
@@ -84,8 +86,8 @@
         background-color: rgb(50,50,50);
         position: fixed;
         left: 0;
-        top: 0;
-        bottom: 2rem;
+        top: var(--top);
+        bottom: 3rem;
         width: 10rem;
     }
     .side-bar-content {
@@ -119,7 +121,7 @@
     }
     .bottom {
         position: fixed;
-        bottom: 2rem;
+        bottom: 3rem;
         width: inherit;
     }
     .invites-header {
@@ -157,10 +159,25 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        margin: 0;
+    }
+    .organisation {
+        background-color: rgb(75,75,75);
+        text-decoration: none;
+        margin-block: .25rem;
+    }
+    .organisation:hover {
+        background-color: rgb(100,100,100);
+    }
+    .organisation > h4 {
+        text-align: left;
+        margin-inline: .5rem;
+        margin-block: 0;
+        padding: .5rem;
     }
 </style>
 
-<div class="side-bar" style='width: {width};'>
+<div class="side-bar" style='width: {width}; --top: {top};'>
     <button class='edge' on:click={() => toggleSideBar()}></button>
     {#if $showSideBar}
         <div class='side-bar-content'>
@@ -177,10 +194,12 @@
                             </h4>
                         </div>
                     {:else}
-                        <a href="/tool/organisation">New</a>
+                        <div class="section-content">
+                            <a href="/tool/organisation">Create a new organisation</a>
+                        </div>
                         {#each $organisations as org}
                             <div class="section-content organisation">
-                                <a on:click={() => gotoOrg(org)} href="/tool/organisation/{org.organisationId}">
+                                <a class="organisation" on:click={() => gotoOrg(org)} href="/tool/organisation/{org.organisationId}">
                                     <h4>{org.organisationName}</h4>
                                 </a>
                             </div>

@@ -6,6 +6,7 @@
 	import type { Microservice } from '../../../../models/Microservice';
 	import { onMount } from 'svelte';
 	import ColorBackground from '../../../../components/ColorBackground.svelte';
+	import MicroserviceTable from '../../../../components/MicroserviceTable.svelte';
 
 	onMount(() => {
 		mvm().findAll($project?.projectId);
@@ -28,7 +29,7 @@
 	<a class="a-button" href="/tool/microservice">Create a new Microservice</a>
 </div>
 {#if $microservices.length > 0}
-	<ColorBackground>
+<!--	<ColorBackground>
 		{#each $microservices as micro}
         <div class="microservice-border">
 			<a on:click={() => gotoMicro(micro)} href="/tool/microservice/{micro.microserviceId}">
@@ -36,7 +37,7 @@
 					<h1 class="microservice-name">{micro.microserviceName}</h1>
 					<div class="tags">
 						{#if micro.microserviceFile}
-							<!--<pre>{JSON.stringify(micro.microserviceFile.microservice)}</pre>-->
+							&lt;!&ndash;<pre>{JSON.stringify(micro.microserviceFile.microservice)}</pre>&ndash;&gt;
 							{#if micro.microserviceFile.microservice.language}
 								<h2 class="tag lang">{micro.microserviceFile.microservice.language.name}</h2>
 							{/if}
@@ -55,6 +56,11 @@
         </div>
         <div class="microservice-gap"/>
 		{/each}
+	</ColorBackground>-->
+	<ColorBackground>
+		<div class='microservice-border'>
+			<MicroserviceTable microservices={$microservices}/>
+		</div>
 	</ColorBackground>
 {:else}
 	<h3>This project as no microservices</h3>
@@ -72,7 +78,6 @@
 	}
     .microservice-border {
         padding: .25rem;
-        color: transparent;
     }
     .microservice-gap {
 		background: rgb(25, 25, 25);

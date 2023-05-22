@@ -209,8 +209,8 @@
 <span id="cb4-23">        <span class="ot">]</span></span>
 <span id="cb4-24">    <span class="fu">{"}"}</span></span>
 <span id="cb4-25"><span class="ot">]</span></span></code></pre></div>
-<p>The available types are will be provided by the indifidual GenerationService, in its <code>manifest.json</code></p>
-<p>The identifier for any must be provided as the first field. The <code>ref</code> can be supplied for relational data.</p>
+<p>The available types are will be provided by the individual GenerationService, in its <code>manifest.json</code></p>
+<p>The identifier for any collection must be provided as the first field. The <code>ref</code> can be supplied for relational data.</p>
 <h2 id="api-config">API Config</h2>
 <p>The API configuration is done in <code>microservice.api</code>.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb5-1"><span class="er">&quot;api&quot;:</span> <span class="fu">{"{"}</span></span>
@@ -221,7 +221,7 @@
 <p>Additional configuration of the API is done in the <code>microservice.api.options</code>. The available options to configure is provided be the individual GenerationService, in its <code>manifest.json</code></p>
 <h3 id="rest-example">REST Example</h3>
 <h4 id="endpoints">Endpoints</h4>
-<p>Endpoints can eather individually or in groups. Groups are recursive and can there for be nested.</p>
+<p>Endpoints can either be declared individually or in groups. Groups are recursive and can therefore be nested.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb6-1"><span class="er">&quot;endpointGroups&quot;:</span> <span class="ot">[</span></span>
 <span id="cb6-2">    <span class="fu">{"{"}</span></span>
 <span id="cb6-3">        <span class="dt">&quot;groupName&quot;</span><span class="fu">:</span> <span class="st">&quot;/api&quot;</span><span class="fu">,</span></span>
@@ -241,7 +241,7 @@
 <span id="cb6-17">        <span class="dt">&quot;endpoints&quot;</span><span class="fu">:</span> <span class="ot">[]</span></span>
 <span id="cb6-18">    <span class="fu">{"}"}</span></span>
 <span id="cb6-19"><span class="ot">]</span></span></code></pre></div>
-<p>Endpoints that require more complecated implementation, should be declared alone.Endpoints can be linked to a controller by having them grouped:</p>
+<p>Endpoints that require more complicated implementation, should be declared alone.Endpoints can be linked to a controller by having them grouped:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb7-1"><span class="er">&quot;endpointGroups&quot;:</span> <span class="ot">[</span></span>
 <span id="cb7-2">    <span class="fu">{"{"}</span></span>
 <span id="cb7-3">        <span class="dt">&quot;groupName&quot;</span><span class="fu">:</span> <span class="st">&quot;/api/v1/user&quot;</span><span class="fu">,</span></span>
@@ -264,7 +264,7 @@
 <p>The <code>linkedData</code> must also be declared in the <code>microservice.database.data.collections</code>.</p>
 <h3 id="grpc-example">gRPC Example</h3>
 <h4 id="procedures">Procedures</h4>
-<p>The procedures link to their requset and respnse message</p>
+<p>The procedures link to their request and response message</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb8-1"><span class="er">&quot;procedures&quot;:</span> <span class="ot">[</span></span>
 <span id="cb8-2">    <span class="fu">{"{"}</span></span>
 <span id="cb8-3">        <span class="dt">&quot;procedureName&quot;</span><span class="fu">:</span> <span class="st">&quot;authToken&quot;</span><span class="fu">,</span></span>
@@ -308,7 +308,7 @@
 <span id="cb9-32">    <span class="fu">{"}"}</span></span>
 <span id="cb9-33"><span class="ot">]</span></span></code></pre></div>
 <h2 id="external-config">External Config</h2>
-<p>The external config will need information about the other microservices that it will communicate with, so the generated code can add any necessary dependencies. This configureation should be done automaically by the design tool when connecting two microservices.</p>
+<p>The external config will need information about the other microservices that it will communicate with, so the generated code can add any necessary dependencies. This configuration should be done automatically by the design tool when connecting two microservices.</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb10-1"><span class="er">&quot;external&quot;:</span> <span class="ot">[]</span></span></code></pre></div>
 <h3 id="rest-example-1">REST Example</h3>
 <div class="sourceCode" id="cb11"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb11-1"><span class="fu">{"{"}</span></span>
@@ -378,7 +378,7 @@
 <p>For this example we do need a lot more information as we need to generate the proto file and the client side code for the gRPC API.</p>
 <h2 id="templates">Templates</h2>
 <h3 id="crud">CRUD</h3>
-<p>For a quick way to make a service with CRUD functionality. It will generate a controller can API endpoints to perform CRUD operations for every element provided in the <code>microservice.database.data.collections</code>. The example below will generate a <code>UserControler</code>, with the methods: <code>getUser</code>, <code>getAllUser</code>, <code>addUser</code>, <code>updateUser</code>, and <code>removeUser</code>; and an endpoint for each.</p>
+<p>For a quick way to make a service with CRUD functionality. It will generate a controller can API endpoints to perform CRUD operations for every element provided in the <code>microservice.database.data.collections</code>. The example below will generate a <code>UserController</code>, with the methods: <code>getUser</code>, <code>getAllUser</code>, <code>addUser</code>, <code>updateUser</code>, and <code>removeUser</code>; and an endpoint for each.</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb13-1"><span class="fu">{"{"}</span></span>
 <span id="cb13-2">    <span class="dt">&quot;sirup_v&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
 <span id="cb13-3">    <span class="dt">&quot;template&quot;</span><span class="fu">:</span> <span class="fu">{"{"}</span></span>
@@ -435,7 +435,7 @@
 <span id="cb14-10">                <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;java&quot;</span><span class="fu">,</span></span>
 <span id="cb14-11">                <span class="dt">&quot;options&quot;</span><span class="fu">:</span> <span class="fu">{"{"}</span></span>
 <span id="cb14-12">                    <span class="dt">&quot;buildTool&quot;</span><span class="fu">:</span> <span class="st">&quot;maven&quot;</span><span class="fu">,</span></span>
-<span id="cb14-13">                    <span class="dt">&quot;packageName&quot;</span><span class="fu">:</span> <span class="st">&quot;org.exmaple&quot;</span></span>
+<span id="cb14-13">                    <span class="dt">&quot;packageName&quot;</span><span class="fu">:</span> <span class="st">&quot;org.example&quot;</span></span>
 <span id="cb14-14">                <span class="fu">{"}"}</span></span>
 <span id="cb14-15">            <span class="fu">{"}"}</span></span>
 <span id="cb14-16">        <span class="fu">{"}"}</span></span>

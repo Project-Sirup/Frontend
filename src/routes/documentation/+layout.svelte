@@ -1,7 +1,7 @@
 <style>
     .content {
         margin-inline: 25%;
-        padding-bottom: 2rem;
+        padding-bottom: 3rem;
     }
 </style>
 

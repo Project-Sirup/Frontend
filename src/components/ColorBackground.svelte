@@ -1,6 +1,5 @@
 <script lang="ts">
-    export let rounded: boolean = false;
-    let border_radius = rounded ? "5px" : "0";
+    export let border_radius: string = "0";
 </script>
 
 <div class="color-background" style="--border_radius:{border_radius}">

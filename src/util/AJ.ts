@@ -66,7 +66,7 @@ class AJ{
         const res = await fetch(`${this.url}${endpoint}`,{
             method: "GET",
             headers: {
-                "Contetn-Type": "Application/json"
+                "Content-Type": "Application/json"
             },
         });
         return await res.json();
@@ -94,7 +94,7 @@ class AJ{
             const res = await fetch(`${this.url}${endpoint}`, {
                 method: "POST",
                 headers: {
-                    "Contetn-Type": "Application/json"
+                    "Content-Type": "Application/json"
                 },
                 body: JSON.stringify(body),
             });
@@ -149,7 +149,7 @@ class AJ{
             "Token": token,
             "UserId": userId,
             "SystemAccess": systemAccess,
-            "Contetn-Type": "Application/json"
+            "Content-Type": "Application/json"
         }
     }
 }

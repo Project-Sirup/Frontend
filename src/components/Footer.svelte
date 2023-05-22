@@ -10,15 +10,19 @@
         text-align: center;
         justify-content: space-between;
         padding: .5rem;
-        background-color: rgb(0, 0, 25);
-        height: 1rem;
+        background-color: rgb(5,5,5);
+        height: 2rem;
     }
     h6 {
-        margin: 0;
+        font-size: 1rem;
+        margin: .25rem 0 0 0;
         padding-right: 1rem;
     }
     a {
-        color: cyan;
+        color: white;
+        background-color: rgb(100,100,100);
+        padding: .25rem;
+        border-radius: 5px;
     }
 </style>
 

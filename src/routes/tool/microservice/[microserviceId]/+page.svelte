@@ -12,7 +12,7 @@
 	} from '../../../../models/Generator';
 	import type { GenCollection, GenField, GenFile } from '../../../../models/GenFile';
 	import gvm, { generators } from '../../../../stores/Generators';
-	import mvm, { microservice } from '../../../../stores/Microservice';
+	import mvm, { microservice, microservices } from '../../../../stores/Microservice';
 	import { organisation } from '../../../../stores/Organisation';
 	import { project } from '../../../../stores/Project';
 	import ColorBackground from '../../../../components/ColorBackground.svelte';
@@ -66,6 +66,8 @@
 	const saveText: Writable<string> = writable<string>('');
 
 	const viewJson: Writable<boolean> = writable<boolean>(false);
+
+	const configureExternal: Writable<boolean> = writable<boolean>(false);
 
 	const chooseLanguage: Writable<boolean> = writable<boolean>(false);
 
@@ -228,6 +230,14 @@
 		});
 	}
 
+	function addApiOptionValue(option: string, value: string, index: number) {
+		genJson.update((genJson) => {
+			genJson.microservice.api.options[option] = value;
+			return genJson;
+		});
+		$languageConfigsShow[index] = !$languageConfigsShow[index];
+	}
+
 	function addApiOptionRepeated(option: string, ...options) {
 		console.log($apiConfigs);
 		const obj = {};
@@ -308,7 +318,6 @@
 <ColorBackground>
 	<div class="section language">
 		<h2 class="section-header">Select Language</h2>
-		{#each $generators as gen}
 			<div class="selection-border">
 				<div class="selection">
 					{#if $language}
@@ -316,19 +325,20 @@
 							{$language.language}
 						</h3>
 					{/if}
-					{#if $chooseLanguage}
-						<ul class="selection-list">
-							{#each gen.manifest.languages as lang}
-								<li class="selection-option lang-option" on:click={() => selectLanguage(gen, lang)}>
-									<h4 class="selection-title">{lang.language}</h4>
-									<h5 class="selection-description">{lang.description}</h5>
-								</li>
-							{/each}
-						</ul>
-					{/if}
+						{#each $generators as gen}
+							{#if $chooseLanguage}
+								<ul class="selection-list">
+									{#each gen.manifest.languages as lang}
+										<li class="selection-option lang-option" on:click={() => selectLanguage(gen, lang)}>
+											<h4 class="selection-title">{lang.language}</h4>
+											<h5 class="selection-description">{lang.description}</h5>
+										</li>
+									{/each}
+								</ul>
+							{/if}
+						{/each}
 				</div>
 			</div>
-		{/each}
 
 		<div class="config">
 			<h3 class="config-title" on:click={() => ($configureLanguage = !$configureLanguage)}>
@@ -336,18 +346,28 @@
 			</h3>
 			{#if $configureLanguage}
 				{#each $language.options as option, i}
-					{#each Object.entries(option) as [optionName, optionValue]}
+					<div class='option'>
+						{#each Object.entries(option) as [optionName, optionValue]}
 						{#each Object.entries(optionValue) as [key, values]}
 							{#if key === 'value'}
 								<h3 class="option-name">{optionName}</h3>
 								<div class="add">
-									<input
-										type="text"
-										name={optionName}
-										id="i_{optionName}"
-										bind:value={$languageConfigs[i]}
-										placeholder="Enter {optionName}"
-									/>
+									{#if values === 'number'}
+										<input
+											type="number"
+											name={optionName}
+											id=ln_{optionName}
+											bind:value={$languageConfigs[i]}
+										/>
+									{/if}
+									{#if values === 'string'}
+										<input
+											type="text"
+											name={optionName}
+											id=ls_{optionName}
+											bind:value={$languageConfigs[i]}
+										/>
+									{/if}
 									<input
 										type="submit"
 										value="Submit"
@@ -372,8 +392,15 @@
 									</ul>
 								{/if}
 							{/if}
+							{#if key === 'object'}
+								<h1>obj</h1>
+							{/if}
+							{#if key === 'repeated'}
+								<h1>rep</h1>
+							{/if}
 						{/each}
 					{/each}
+					</div>
 				{/each}
 			{/if}
 		</div>
@@ -405,24 +432,51 @@
 			<h3 class="config-title" on:click={() => ($configureApi = !$configureApi)}>API Options</h3>
 			{#if $configureApi}
 				{#each $api.options as option, i}
-					{#each Object.entries(option) as [optionName, optionValue]}
+					<div class='option'>
+						{#each Object.entries(option) as [optionName, optionValue]}
 						{#each Object.entries(optionValue) as [key, value]}
-							{#if key === 'value' && value === 'number'}
-								<!-- Number -->
+							{#if key === 'value'}
 								<h3 class="option-name">{optionName}</h3>
 								<div class="add">
-									<input
-										type="number"
-										name={optionName}
-										id={optionName}
-										bind:value={$apiConfigs[i]}
-									/>
+									{#if value === 'number'}
+										<input
+											type="number"
+											name={optionName}
+											id=n_{optionName}
+											bind:value={$apiConfigs[i]}
+										/>
+									{/if}
+									{#if value === 'string'}
+										<input
+											type="text"
+											name={optionName}
+											id=s_{optionName}
+											bind:value={$apiConfigs[i]}
+										/>
+									{/if}
 									<input
 										type="submit"
 										value="Submit"
 										on:click={() => addApiOption(optionName, i)}
 									/>
 								</div>
+							{/if}
+							{#if key === 'selection'}
+								<h3
+									class="option-name selection-title"
+									on:click={() => ($apiConfigs[i] = !$apiConfigs[i])}
+								>
+									{optionName}: {$genJson.microservice.api.options[optionName]}
+								</h3>
+								{#if $apiConfigs[i]}
+									<ul>
+										{#each value as v}
+											<li on:click={() => addApiOptionValue(optionName,v, i)}>
+												<h4 class="selection-title">{v}</h4>
+											</li>
+										{/each}
+									</ul>
+								{/if}
 							{/if}
 							{#if key === 'repeated'}
 								<!-- Array of values -->
@@ -516,6 +570,7 @@
 							{/if}
 						{/each}
 					{/each}
+					</div>
 				{/each}
 			{/if}
 		</div>
@@ -618,6 +673,17 @@
 	</div>
 </ColorBackground>
 
+<div class="external">
+	<h2 class="a-button" on:click={() => $configureExternal = !$configureExternal}>External</h2>
+	{#if $configureExternal}
+		{#each $microservices as micro}
+			{#if micro.microserviceId !== $microservice.microserviceId}
+				<h1>{micro.microserviceName}</h1>
+			{/if}
+		{/each}
+	{/if}
+</div>
+
 <div class="controls">
 	<button on:click={() => save()}>Save{$saveText}</button>
 
@@ -632,13 +698,17 @@
 
 	{#if $viewJson}
 		<h3>JSON</h3>
-		<ColorBackground rounded={true}>
+		<ColorBackground border_radius={"5px"}>
 			<pre><code>{JSON.stringify($genJson, null, 4)}</code></pre>
 		</ColorBackground>
 	{/if}
 </div>
 
 <style>
+		.option {
+				border: solid rgb(75,75,75) 2px;
+				margin: .5rem;
+		}
 	.section-header {
 		background-color: hsl(200, 100%, 0%);
 		margin: 0;
@@ -763,6 +833,7 @@
 		background-color: rgb(10, 10, 10);
 		width: calc(100% - 4px - .5rem);
 		border-color: transparent;
+		word-wrap: break-word;
 	}
 	select {
 		width: 100%;
@@ -781,11 +852,11 @@
 	.controls {
 		position: absolute;
 		right: 2rem;
-		top: 2rem;
-		width: 30rem;
+		top: 4rem;
+		width: 25%;
 		display: flex;
 		flex-direction: column;
-		padding-bottom: 2rem;
+		padding-bottom: 4rem;
 	}
 	.head {
 		display: flex;

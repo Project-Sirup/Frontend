@@ -19,15 +19,17 @@
 
 	let userSearch = '';
 
+	const showInvitations: Writable<boolean> = writable<boolean>(false);
+
 	const users: Writable<User[]> = writable<User[]>([]);
 
 	onMount(async () => {
-		await pvm().findAll($organisation.organisationId);
+		await pvm().findAll($organisation!.organisationId);
 	});
 
 	function deleteOrg() {
 		ovm()
-			.delete($organisation.organisationId)
+			.delete($organisation!.organisationId)
 			.then(() => (window.location.href = '/tool/organisation'));
 	}
 
@@ -51,9 +53,9 @@
 
 	async function inviteUser(_user: User) {
 		await ivm().invite({
-			senderId: $user.userId,
+			senderId: $user!.userId,
 			receiverId: _user.userId,
-			organisationId: $organisation.organisationId
+			organisationId: $organisation!.organisationId
 		} as Invite);
 	}
 </script>
@@ -86,30 +88,46 @@
 	<h3>This organisation has no projects</h3>
 {/if}
 
-<h2>Invite a user</h2>
 
-<input
-	type="text"
-	name="userSearch"
-	id="userSearch"
-	bind:value={userSearch}
-	on:input={() => searchUsers()}
-/>
-{#each $users as user}
-	<div class="user">
-		{user.userName}
-		<button on:click={() => inviteUser(user)}>Invite</button>
+<div class="controls">
+	<div class="invitations">
+		<h2 class="a-button" on:click={() => $showInvitations = !$showInvitations}>Invite a user</h2>
+		{#if $showInvitations}
+			<input
+				class='new-text'
+				type="text"
+				name="userSearch"
+				id="userSearch"
+				placeholder="Search for a user"
+				bind:value={userSearch}
+				on:input={() => searchUsers()}
+			/>
+			{#each $users as user}
+				<div class="user">
+					{user.userName}
+					<button on:click={() => inviteUser(user)}>Invite</button>
+				</div>
+			{/each}
+		{/if}
 	</div>
-{/each}
-
-{#each Object.entries($organisationUsers) as [permission, users]}
-	<div>
-		<h2>{permission}</h2>
-		{#each users as user}
-			<h3>{user.userName}</h3>
+	<div class='current-users'>
+		{#each Object.entries($organisationUsers) as [permission, users]}
+			<div>
+				<h2 class="permission">{permission}</h2>
+				{#each users as _user}
+					<div class="user">
+						{#if _user.userId === $user?.userId}
+							<h3 class="username">{_user.userName} (you)</h3>
+						{:else}
+							<h3 class="username">{_user.userName}</h3>
+						{/if}
+						<h4 class="userid">{_user.userId}</h4>
+					</div>
+				{/each}
+			</div>
 		{/each}
 	</div>
-{/each}
+</div>
 
 <style>
 	.project-gap {
@@ -132,5 +150,37 @@
 	}
 	a {
 		text-decoration: none;
+	}
+	.controls {
+		position: absolute;
+		right: 0;
+		top: 2rem;
+		width: 20%;
+		display: flex;
+		flex-direction: column;
+		padding-bottom: 2rem;
+		margin-right: 1rem;
+		border-left: solid rgb(100,100,100) 2px;
+		height: calc(100% - 5rem);
+			overflow: hidden;
+	}
+	.current-users {
+      overflow-x: auto;
+	}
+	.user {
+		background-color: rgb(50,50,50);
+		padding: .5rem;
+		margin: .25rem;
+		border-radius: 5px;
+	}
+	.username {
+
+	}
+	.userid {
+		color: rgb(175,175,175);
+	}
+	.permission {
+			padding-left: .5rem;
+		border-bottom: solid rgb(75,75,75) 2px;
 	}
 </style>
