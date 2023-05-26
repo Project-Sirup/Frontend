@@ -7,6 +7,7 @@
     import GlobalNotificationBar from '../../components/GlobalNotificationBar.svelte';
     import { writable } from "svelte/store";
     import type { Writable } from "svelte/store";
+    import { PUBLIC_NOTI_ADDRESS, PUBLIC_NOTI_PORT } from "$env/static/public";
 
     let sse;
 
@@ -22,7 +23,7 @@
     onMount(async () => {
         //await uvm().init();
         //gvm().getAll();
-        sse = new EventSource(`http://127.0.0.1:2104/api/v1/subscribe/${$user?.userId}`);
+        sse = new EventSource(`${PUBLIC_NOTI_ADDRESS}:${PUBLIC_NOTI_PORT}/api/v1/subscribe/${$user?.userId}`);
         sse.onmessage = (res) => {
             const event: Event = JSON.parse(res.data);
             console.log(event);

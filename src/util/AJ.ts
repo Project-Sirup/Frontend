@@ -1,6 +1,7 @@
 import { error } from "../stores/Error";
 import type { Error } from "../stores/Error";
 import uvm from "../stores/User";
+import { PUBLIC_REG_ADDRESS, PUBLIC_REG_PORT, PUBLIC_USER_ADDRESS, PUBLIC_USER_PORT } from "$env/static/public";
 
 export type ApiResponse<T> = {
     statusCode: number;
@@ -23,11 +24,11 @@ class _AJ{
     }
 
     user = () => {
-        return AJ.getInstance()._url("http://127.0.0.1:2103/api/v1");
+        return AJ.getInstance()._url(`${PUBLIC_USER_ADDRESS}:${PUBLIC_USER_PORT}/api/v1`);
     }
 
     register = () => {
-        return AJ.getInstance()._url("http://127.0.0.1:2100/api/v1");
+        return AJ.getInstance()._url(`${PUBLIC_REG_ADDRESS}:${PUBLIC_REG_PORT}/api/v1`);
     }
 
     generator = (url: string) => {
